@@ -411,10 +411,17 @@
     @include('layouts.navbar')
 
         @isset($status)
+
         <div class="mt-3 bg-gray-100 dark:bg-gray-900 py-2">
-        <div class="alert alert-success" role="alert">
-            {{ $status }}
-          </div>
+            @if($status == 'Готово')
+            <div class="alert alert-success" role="alert">
+                {{ $status }}
+              </div>
+              @else
+              <div class="alert alert-danger" role="alert">
+                {{ $status }}
+              </div>
+            @endif
           </div>
         @endisset
 

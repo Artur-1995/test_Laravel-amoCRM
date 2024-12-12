@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Traits\AmoCRM;
+use App\Traits\AmoCRMTrait;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class TransactionController extends Controller
 {
-    use AmoCRM;
+    use AmoCRMTrait;
     
     public function getTransactions(Request $request)
     {

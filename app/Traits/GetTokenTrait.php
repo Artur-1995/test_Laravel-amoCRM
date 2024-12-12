@@ -4,13 +4,11 @@ namespace App\Traits;
 
 use Exception;
 use App\Models\Token;
-use AmoCRM\Client\AmoCRMApiClient;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Cache;
 use League\OAuth2\Client\Token\AccessToken;
 use AmoCRM\Exceptions\AmoCRMoAuthApiException;
-use Illuminate\Http\RedirectResponse;
 
 /**
  * Трайт для получения токенов доступа
@@ -19,36 +17,24 @@ use Illuminate\Http\RedirectResponse;
  * из базы или по стандарту Auth2.0 через интеграцию
  *
  * @param AccessToken accessToken    
- * @param AmoCRMApiClient apiClient
  * @param string uri
  *
  * @throws Exception
  * @throws AmoCRMoAuthApiException ошибка при получении токена доступа
  */
-trait GetToken
+trait GetTokenTrait
 {
     /**
      * Токена доступа
-     * @param AccessToken accessToken
+     * @param AccessToken $accessToken
      */
     public $accessToken;
 
     /**
-     * Клиент доступа к сервису AmoCRM
-     * @param AmoCRMApiClient apiClient
-     */
-    public $apiClient;
-
-    /**
      * Название запрашиваемого роута
-     * @param string uri
+     * @param string $uri
      */
-    public $uri;
-
-    public function __construct()
-    {
-        $this->apiClient = parent::getApiClient();
-    }
+    public $uri = 'home';
 
     /**
      * Метод для получения токенов доступа
@@ -62,13 +48,13 @@ trait GetToken
      */
     public function getToken(): AccessToken
     {
-        try{
+        try {
             if (isset($_GET['referer'])) {
                 $this->apiClient->setAccountBaseDomain($_GET['referer']);
             }
-    
+
             $this->getTokenFromBase();
-    
+
             if (empty($this->accessToken instanceof AccessToken)) {
                 $this->uri = Cache::get('uri');
                 if (isset($_GET['code'])) {
@@ -141,10 +127,10 @@ trait GetToken
      *
      * Метод обрабатывает GET параметров
      * из ответа сервиса AmoCRM, получает токен доступа и сохраняет в БД
-     *
-     * @return RedirectResponse
+     * 
+     * @return void
      */
-    public function tokenHandler(): RedirectResponse
+    public function tokenHandler(): void
     {
         try {
             if (isset($_GET['code'])) {
@@ -163,8 +149,6 @@ trait GetToken
         } catch (AmoCRMoAuthApiException $e) {
             Log::info('error', [$e->getCode() => $e->getMessage()]);
         }
-
-        return redirect()->route($this->uri);
     }
 
     /**
@@ -193,7 +177,9 @@ trait GetToken
                 );
                 die;
             } else {
-                Cache::forever('uri', Route::currentRouteName());
+                Cache::remember('uri', now()->addMinutes(5), function () {
+                    return Route::currentRouteName();
+                });
                 $authorizationUrl = $this->apiClient->getOAuthClient()->getAuthorizeUrl([
                     'state' => $state,
                     'mode' => 'post_message',

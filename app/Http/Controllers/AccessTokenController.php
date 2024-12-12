@@ -2,25 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Traits\AmoCRM;
+use App\Traits\AmoCRMTrait;
+use App\Traits\RedirectUserTrait;
 use Illuminate\Http\RedirectResponse;
 
 /**
- * Контроллер для получения токена и редиректа пользователя по запрашиваемой ссылке
+ * Контроллер для получения токена и перенаправления пользователя на запрашиваемую страницу
  *
- * @return RedirectResponse $this->RedirectUri
+ * @return RedirectResponse редирект на запрашиваемую страницу
  */
 class AccessTokenController extends Controller
 {
-    use AmoCRM;
-    
+    use AmoCRMTrait, RedirectUserTrait;
+
     /**
-     * Метод для редиректа на запрашиваемую пользователем ссылку
+     * Редиректа на запрашиваемую страницу
      *
-     * @return RedirectResponse redirectUri() метод для редиректа
+     * @return RedirectResponse
      */
     public function __invoke(): RedirectResponse
-    {        
+    {
         return $this->redirectUri();
     }
 }
