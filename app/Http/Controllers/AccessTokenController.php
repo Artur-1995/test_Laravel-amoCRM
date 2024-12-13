@@ -7,8 +7,14 @@ use App\Traits\RedirectUserTrait;
 use Illuminate\Http\RedirectResponse;
 
 /**
- * Контроллер для получения токена и перенаправления пользователя на запрашиваемую страницу
+ * Контроллер для получения токена и перенаправления пользователя
+ * на запрашиваемую страницу
  *
+ * @category
+ * @package
+ * @author
+ * @license
+ * @link
  * @return RedirectResponse редирект на запрашиваемую страницу
  */
 class AccessTokenController extends Controller

@@ -33,12 +33,11 @@ class LinkContactToTransactionController extends Controller
         $leadId = $request->leadId;
 
         try {
-            
             $lead = $this->apiClient->leads()->getOne($leadId, [LeadModel::CONTACTS]);
             $contact = $this->apiClient->contacts()->getOne($contactId);
             $contacts = $lead->contacts ? $lead->contacts->pluck('id') : [];
             $contactIds = $contacts;
-            
+
             $links = new LinksCollection();
             $links->add($contact);
             $status = (!in_array($contactId, $contactIds) && $this->apiClient->leads()->link($lead, $links)) ? 'Готово' : 'Ошибка';
