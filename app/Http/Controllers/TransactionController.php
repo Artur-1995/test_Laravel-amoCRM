@@ -3,9 +3,11 @@
 /**
  * Контроллер для вывода таблицы со сделаком сделок из AmoCRM
  * 
+ * PHP version 7.4.33
+ * 
  * @author Avetisyan Artur <89254423508@mail.ru>
  * 
- * @version GIT: <git_id>
+ * @version GIT: a01e27e7f36cb5b4c1898d461e62ca6f29fb54fa
  * 
  * @link [https://github.com/amocrm/amocrm-api-php/blob/master/README.md#поддерживаемые-методы-и-сервисы]
  * [Описание работы с методами библиотеки]
