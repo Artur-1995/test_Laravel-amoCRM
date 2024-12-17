@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Контроллер для перенаправления пользователя
+ * на запрашиваемую страницу при подучении токена
+ * 
+ * PHP version 7.4.33
+ * 
+ * @author Avetisyan Artur <89254423508@mail.ru>
+ * 
+ * @version GIT: 
+ */
+
 namespace App\Http\Controllers;
 
 use App\Traits\AmoCRMTrait;
@@ -7,17 +18,9 @@ use App\Traits\RedirectUserTrait;
 use Illuminate\Http\RedirectResponse;
 
 /**
- * Контроллер для получения токена и перенаправления пользователя
- * на запрашиваемую страницу
- *
- * @category
- * @package
- * @author
- * @license
- * @link
- * @return RedirectResponse редирект на запрашиваемую страницу
+ * Класс вызывает метод для редиректа пользователя по необходимому адресу
  */
-class AccessTokenController extends Controller
+class AccessTokenController extends BaseAmoController
 {
     use AmoCRMTrait, RedirectUserTrait;
 

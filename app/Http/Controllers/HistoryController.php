@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Action;
 
-class HistoryController extends Controller
+class HistoryController extends BaseAmoController
 {
     public function __invoke()
     {

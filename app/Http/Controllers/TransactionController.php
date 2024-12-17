@@ -7,7 +7,7 @@
  * 
  * @author Avetisyan Artur <89254423508@mail.ru>
  * 
- * @version GIT: a01e27e7f36cb5b4c1898d461e62ca6f29fb54fa
+ * @version GIT:
  * 
  * @link [https://github.com/amocrm/amocrm-api-php/blob/master/README.md#поддерживаемые-методы-и-сервисы]
  * [Описание работы с методами библиотеки]
@@ -17,22 +17,14 @@ namespace App\Http\Controllers;
 
 use Exception;
 use Illuminate\View\View;
-use App\Traits\AmoCRMTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 /**
  * Класс получает данные для отображения таблицы со сделками из сервиса AmoCRM
- * 
- * @author Avetisyan Artur <89254423508@mail.ru>
- * 
- * @link [https://github.com/amocrm/amocrm-api-php/blob/master/README.md#поддерживаемые-методы-и-сервисы]
- * [Описание работы с методами библиотеки]
  */
-class TransactionController extends Controller
+class TransactionController extends BaseAmoController
 {
-    use AmoCRMTrait;
-
     /**
      * Метод получает все данные для таблицы сделок
      *
@@ -40,19 +32,19 @@ class TransactionController extends Controller
      * 
      * @param Request $request результат выполнения привязки контактов
      * 
-     * @throws Exception Ошибка при получении данных
+     * @throws Exception Данные отсутствуют
      * 
      * @return View 'transaction' страница с таблицей сделок
      */
     public function __invoke(Request $request): View
     {
         try {
-            $leadsCollection = $this->apiClient->leads()->get(null, ['contacts']);
-            $contacts = $this->apiClient->contacts();
-            $contactsCollection = $contacts->get();
+            $leadsCollection = $this->service->getLeadsCollection();
+            $contactsCollection = $this->service->getContactsCollection();
         } catch (Exception $e) {
             Log::info('get_trnsaction_error', [$e->getCode() => $e->getMessage()]);
         }
+        $this->trnsactionService->create($leadsCollection);
         $status = $request->session()->get('status') ?? null;
 
         return view(

@@ -26,13 +26,13 @@ trait GetTokenTrait
 {
     /**
      * Токена доступа
-     * @param AccessToken $accessToken
+     * @var AccessToken $accessToken
      */
     public $accessToken;
 
     /**
      * Название запрашиваемого роута
-     * @param string $uri
+     * @var string $uri
      */
     public $uri = 'home';
 
@@ -177,9 +177,7 @@ trait GetTokenTrait
                 );
                 die;
             } else {
-                Cache::remember('uri', now()->addMinutes(5), function () {
-                    return Route::currentRouteName();
-                });
+                Cache::forever('uri', Route::currentRouteName());
                 $authorizationUrl = $this->apiClient->getOAuthClient()->getAuthorizeUrl([
                     'state' => $state,
                     'mode' => 'post_message',

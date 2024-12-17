@@ -18,11 +18,6 @@
 </nav>
 
 <script>
-  if (window.performance.getEntriesByType) {
-    if (window.performance.getEntriesByType("navigation")[0].type === "reload") {
-        alert('reloaded')
-    }
-  }
   document.getElementById('redirectHistory').addEventListener('click', function() {
       window.location.href = '{{ route('history') }}';
   });

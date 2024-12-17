@@ -1,14 +1,22 @@
 <?php
 
+/**
+ * Контроллер для подключения контакта к сделке
+ * 
+ * PHP version 7.4.33
+ * 
+ * @author Avetisyan Artur <89254423508@mail.ru>
+ * 
+ * @version GIT: 
+ * 
+ * @link [https://github.com/amocrm/amocrm-api-php/blob/master/README.md#поддерживаемые-методы-и-сервисы]
+ * [Описание работы с методами библиотеки]
+ */
+
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LinkRequest;
 use Exception;
-use App\Models\Action;
-use App\Traits\AmoCRMTrait;
-use AmoCRM\Models\LeadModel;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use AmoCRM\Collections\LinksCollection;
 use Illuminate\Http\RedirectResponse;
 
 /**
@@ -16,40 +24,33 @@ use Illuminate\Http\RedirectResponse;
  *
  * @throws Exception Ошибка при подключении контакта к сделке
  */
-class LinkContactToTransactionController extends Controller
+class LinkContactToTransactionController extends BaseAmoController
 {
-    use AmoCRMTrait;
-
     /**
-     * Класс для подключения контакта к сделке
+     * Метод подключения контакта к сделке
+     * 
+     * Получение сущности контакта и сделки с последующей линковкой
      *
+     * @param LinkRequest $request запрос содержащий id сделки и id контакта
+     * 
      * @throws Exception Ошибка при подключении контакта к сделке
-     * @param Request $request запрос содержащий id сделки и id контакта
+     * 
      * @return RedirectResponse возврат на страницу со статусом выполнения
      */
-    public function __invoke(Request $request): RedirectResponse
+    public function __invoke(LinkRequest $request): RedirectResponse
     {
+        $request->validated();
+
         $contactId = $request->id;
-        $leadId = $request->leadId;
+        $contact = $this->service->getContact($contactId);
 
-        try {
-            $lead = $this->apiClient->leads()->getOne($leadId, [LeadModel::CONTACTS]);
-            $contact = $this->apiClient->contacts()->getOne($contactId);
-            $contacts = $lead->contacts ? $lead->contacts->pluck('id') : [];
-            $contactIds = $contacts;
+        $links = $this->linkService->action($contact);
+        $status = $this->linkService->getStatus($request, $links);
 
-            $links = new LinksCollection();
-            $links->add($contact);
-            $status = (!in_array($contactId, $contactIds) && $this->apiClient->leads()->link($lead, $links)) ? 'Готово' : 'Ошибка';
-            $data = [
-                'action' => 'Добавление контакта ' . $contact->name ?? null . ' (' . $contact->id ?? null . ')',
-                'result' => $status ?? 'Готово',
-            ];
-            Action::create($data);
-        } catch (Exception $e) {
-            Log::info('error_add_action', [$e->getCode() => $e->getMessage()]);
+        if ($status == 'Готово') {
+            $this->actionService->create($contact, $status);
         }
-
-        return back()->with('status', $status ?? 'Ошибка');
+            
+        return back()->with('status', $status);
     }
 }

@@ -21,7 +21,7 @@ trait AmoCRMTrait
 
     /**
      * Клиент доступа к сервису AmoCRM
-     * @param AmoCRMApiClient $apiClient
+     * @var AmoCRMApiClient $apiClient
      */
     public $apiClient;
 
