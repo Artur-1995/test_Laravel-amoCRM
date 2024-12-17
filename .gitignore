@@ -15,3 +15,4 @@ yarn-error.log
 /.vscode/sftp.json
 /artur-inc.online
 /docker/dbdata
+/other_code
